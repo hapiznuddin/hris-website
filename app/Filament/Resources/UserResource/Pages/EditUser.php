@@ -40,18 +40,6 @@ class EditUser extends EditRecord
                     ->email()
                     ->disabled($isSupervisorEditingOther),
 
-                Forms\Components\TextInput::make('nip')
-                    ->default(fn() => optional($record->employee)->nip)
-                    ->disabled($isSupervisorEditingOther),
-
-                Forms\Components\TextInput::make('position')
-                ->default(fn ($record) => optional($record->employee)->position)
-                    ->disabled($isSupervisorEditingOther),
-
-                Forms\Components\TextInput::make('department')
-                ->default(fn ($record) => optional($record->employee)->department)
-                    ->disabled($isSupervisorEditingOther),
-
                 // Field yang bisa diedit oleh supervisor
                 Forms\Components\Select::make('role')
                     ->label('Role')

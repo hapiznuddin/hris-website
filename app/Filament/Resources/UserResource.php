@@ -14,6 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
 {
@@ -37,7 +38,20 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('name')->required(),
+                Forms\Components\TextInput::make('email')->required()->email(),
+                Forms\Components\TextInput::make('password')
+                    ->password()
+                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                    ->dehydrated(fn($state) => filled($state))
+                    ->required(fn($context) => $context === 'create'),
+                Forms\Components\Select::make('role')
+                    ->options([
+                        'hrd' => 'HRD',
+                        'manager' => 'Manager',
+                        'karyawan' => 'Karyawan',
+                    ]),
+                Forms\Components\Toggle::make('active')->default(true),
             ]);
     }
 
@@ -46,8 +60,6 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('nip')->label('NIP')
-                    ->getStateUsing(fn($record) => optional($record->employee)->nip)->searchable(),
                 Tables\Columns\TextColumn::make('email')->searchable(),
                 Tables\Columns\TextColumn::make('role'),
                 Tables\Columns\IconColumn::make('active')
