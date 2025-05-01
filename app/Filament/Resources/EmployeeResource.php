@@ -58,6 +58,11 @@ class EmployeeResource extends Resource
                     'Aktif' => 'Aktif',
                     'Tidak Aktif' => 'Tidak Aktif',
                 ]),
+                Forms\Components\Select::make('contract')->required()->label('Status Kontrak')->options([
+                    'Tetap' => 'Tetap',
+                    'Kontrak' => 'Kontrak',
+                    'Magang' => 'Magang',
+                ]),
                 Forms\Components\DatePicker::make('join_date')->required()->label('Tanggal Bergabung'),
                 Forms\Components\FileUpload::make('photo')->required()->label('Foto Pegawai')->image()->imageEditor()->imageEditorMode(2),
             ]);
