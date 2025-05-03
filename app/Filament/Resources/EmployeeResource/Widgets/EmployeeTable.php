@@ -29,10 +29,10 @@ class EmployeeTable extends BaseWidget
             ->columns([
                 Stack::make([
                     Tables\Columns\ImageColumn::make('photo')->circular()->label('Foto Pegawai')->size(50),
-                    Tables\Columns\TextColumn::make('name')->searchable()->label('Nama Pegawai')->weight('bold'),
+                    Tables\Columns\TextColumn::make('name')->searchable()->label('Nama Pegawai')->weight('bold')->size('lg'),
                     Tables\Columns\TextColumn::make('nip')->searchable()->label('NIP'),
-                    Tables\Columns\TextColumn::make('position')->searchable()->label('Jabatan'),
-                    Tables\Columns\TextColumn::make('department')->searchable()->label('Departemen'),
+                    Tables\Columns\TextColumn::make('position')->searchable()->label('Jabatan')->size('xs'),
+                    Tables\Columns\TextColumn::make('department')->searchable()->label('Departemen')->size('xs'),
                 ]),
             ])
             ->actions([

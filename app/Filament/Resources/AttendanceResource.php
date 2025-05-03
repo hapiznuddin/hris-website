@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\AttendanceResource\Pages;
 use App\Filament\Resources\AttendanceResource\RelationManagers;
 use App\Models\Attendance;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -31,7 +32,9 @@ class AttendanceResource extends Resource
 
             Forms\Components\DatePicker::make('date')
                 ->required()
-                ->default(now()),
+                ->default(now())
+                ->label('Tanggal')
+                ->formatStateUsing(fn ($state) => Carbon::parse($state)->translatedFormat('d F Y')),
 
             Forms\Components\TimePicker::make('clock_in')
                 ->label('Waktu Masuk'),

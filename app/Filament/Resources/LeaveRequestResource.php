@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\LeaveRequestResource\Pages;
 use App\Filament\Resources\LeaveRequestResource\RelationManagers;
 use App\Models\LeaveRequest;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -62,8 +63,7 @@ class LeaveRequestResource extends Resource
                         'Ditolak' => 'Ditolak',
                     ])
                     ->default('pending')
-                    ->required()
-                    ->visible(fn(): bool => auth()->user()->role === 'hrd' || auth()->user()->role === 'supervisor'),
+                    ->required(),
             ]);
 
 
@@ -83,11 +83,15 @@ class LeaveRequestResource extends Resource
 
                 Tables\Columns\TextColumn::make('start_date')
                     ->date()
-                    ->label('Mulai'),
+                    ->label('Mulai')
+                    ->searchable()
+                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->translatedFormat('d F Y')),
 
                 Tables\Columns\TextColumn::make('end_date')
                     ->date()
-                    ->label('Selesai'),
+                    ->label('Selesai')
+                    ->searchable()
+                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->translatedFormat('d F Y')),
 
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors([

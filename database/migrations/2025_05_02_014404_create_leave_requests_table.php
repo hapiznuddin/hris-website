@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('type'); // Misal: "Cuti tahunan", "Sakit", "Melahirkan"
             $table->text('reason'); // Alasan cuti
             $table->string('attachment')->nullable(); // Path file dokumen pendukung
-            $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
+            $table->enum('status', ['Pending', 'Disetujui', 'Ditolak'])->default('Pending');
             $table->foreignId('approved_by')->nullable()->constrained('users'); // User yang menyetujui
             $table->timestamps();
         });
