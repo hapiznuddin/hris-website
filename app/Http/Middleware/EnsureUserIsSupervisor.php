@@ -13,19 +13,19 @@ class EnsureUserIsSupervisor
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    // public function handle(Request $request, Closure $next): Response
-    // {
-    //     // Pastikan user login
-    //     if (!auth()->check()) {
-    //         return redirect('/admin/login');
-    //     }
+    public function handle(Request $request, Closure $next): Response
+    {
+        // Pastikan user login
+        if (!auth()->check()) {
+            return redirect('/admin/login');
+        }
 
-    //     $user = auth()->user();
+        $user = auth()->user();
 
-    //     // Cek apakah role adalah 'supervisor'
-    //     if ($user->role !== 'supervisor') {
-    //         abort(403, 'Unauthorized action.');
-    //     }
-    //     return $next($request);
-    // }
+        // Cek apakah role adalah 'supervisor'
+        if ($user->role === 'employee' $user->role === 'karyawan') {
+            abort(403, 'Unauthorized action.');
+        }
+        return $next($request);
+    }
 }

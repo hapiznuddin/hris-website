@@ -50,7 +50,7 @@ class EditUser extends EditRecord
                         'karyawan' => 'Karyawan',
                     ])
                     ->required(),
-                    // ->disabled(fn(): bool => Auth::user()->role !== 'supervisor'),
+                    ->disabled(fn(): bool => Auth::user()->role === 'karyawan' || Auth::user()->role === 'employee'),
 
                 Forms\Components\Actions::make([
                     Action::make('resetPassword')

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Tambahkan field role (enum atau string)
-            $table->string('role')->default('employee'); // bisa: 'hrd', 'manager', 'employee'
+            $table->string('role')->default('karyawan'); // bisa: 'hrd', 'manager', 'employee'
 
             // Tambahkan field active (untuk aktivasi akun)
             $table->boolean('active')->default(true);
