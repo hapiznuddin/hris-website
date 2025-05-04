@@ -65,7 +65,7 @@ class EditUser extends EditRecord
                             session()->flash('password_reset_success', 'Password berhasil direset ke 12345678');
                         })
                         ->requiresConfirmation()
-                        ->visible(fn(): bool => Auth::user()->role === 'hrd' || Auth::user()->role === 'supervisor'),
+                        // ->visible(fn(): bool => Auth::user()->role === 'hrd' || Auth::user()->role === 'supervisor'),
                 ]),
             ]);
     }
