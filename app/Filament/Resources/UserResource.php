@@ -31,10 +31,10 @@ class UserResource extends Resource
         ];
     }
 
-    public static function canAccess(): bool
-    {
-        return Auth::check() && Auth::user()->role === 'supervisor';
-    }
+    // public static function canAccess(): bool
+    // {
+    //     return Auth::check() && Auth::user()->role === 'supervisor';
+    // }
 
     public static function form(Form $form): Form
     {
