@@ -24,12 +24,12 @@ class UserResource extends Resource
     protected static ?string $pluralLabel = 'Manajemen Akun';
     protected static ?string $navigationIcon = 'heroicon-o-user-group'; 
 
-    protected function getMiddleware(): array
-    {
-        return [
-            EnsureUserIsSupervisor::class,
-        ];
-    }
+    // protected function getMiddleware(): array
+    // {
+    //     return [
+    //         EnsureUserIsSupervisor::class,
+    //     ];
+    // }
 
     // public static function canAccess(): bool
     // {
