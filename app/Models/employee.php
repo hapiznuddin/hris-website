@@ -28,4 +28,14 @@ class Employee extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function leaves()
+    {
+        return $this->hasMany(LeaveRequest::class, 'employee_id');
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class, 'employee_id');
+    }
 }

@@ -19,8 +19,10 @@ use Illuminate\Support\Facades\Hash;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Manajemen Akun';
+    protected static ?string $navigationGroup = 'Data Master';
+    protected static ?string $pluralLabel = 'Manajemen Akun';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group'; 
 
     protected function getMiddleware(): array
     {

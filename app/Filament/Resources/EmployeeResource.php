@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\EmployeeResource\Pages;
 use App\Filament\Resources\EmployeeResource\RelationManagers;
 use App\Models\Employee;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,10 +17,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class EmployeeResource extends Resource
 {
     protected static ?string $model = Employee::class;
-
     protected static ?string $navigationLabel = 'Data Pegawai';
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Data Master';
+    protected static ?string $pluralLabel = 'Data Pegawai';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function form(Form $form): Form
     {
@@ -77,7 +78,7 @@ class EmployeeResource extends Resource
                 Tables\Columns\TextColumn::make('name')->label('Nama Pegawai')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('position')->label('Jabatan')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('department')->label('Departemen')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('join_date')->label('Tanggal Bergabung')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('join_date')->label('Tanggal Bergabung')->sortable()->searchable()->formatStateUsing(fn ($state) => Carbon::parse($state)->translatedFormat('d F Y')),
             ])
             ->filters([
                 //
