@@ -49,7 +49,7 @@ class EditUser extends EditRecord
                         'dev' => 'Developer',
                         'karyawan' => 'Karyawan',
                     ])
-                    ->required(),
+                    ->required()
                     ->disabled(fn(): bool => Auth::user()->role === 'karyawan' || Auth::user()->role === 'employee'),
 
                 Forms\Components\Actions::make([
