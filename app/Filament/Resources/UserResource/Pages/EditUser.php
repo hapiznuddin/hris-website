@@ -49,7 +49,7 @@ class EditUser extends EditRecord
                         'dev' => 'Developer',
                         'karyawan' => 'Karyawan',
                     ])
-                    ->required()
+                    ->required(),
                     // ->disabled(fn(): bool => Auth::user()->role !== 'supervisor'),
 
                 Forms\Components\Actions::make([
@@ -64,7 +64,7 @@ class EditUser extends EditRecord
                             // Flash message
                             session()->flash('password_reset_success', 'Password berhasil direset ke 12345678');
                         })
-                        ->requiresConfirmation()
+                        ->requiresConfirmation(),
                         // ->visible(fn(): bool => Auth::user()->role === 'hrd' || Auth::user()->role === 'supervisor'),
                 ]),
             ]);
