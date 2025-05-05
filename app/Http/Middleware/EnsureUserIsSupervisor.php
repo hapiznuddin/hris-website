@@ -23,7 +23,7 @@ class EnsureUserIsSupervisor
         $user = auth()->user();
 
         // Cek apakah role adalah 'supervisor'
-        if ($user->role === 'employee' $user->role === 'karyawan') {
+        if ($user->role === 'employee' || $user->role === 'karyawan') {
             abort(403, 'Unauthorized action.');
         }
         return $next($request);
