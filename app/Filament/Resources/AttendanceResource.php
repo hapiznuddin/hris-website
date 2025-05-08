@@ -86,10 +86,72 @@ class AttendanceResource extends Resource
                     'info' => 'Izin',
                     'primary' => 'Pulang Cepat',
                 ]),
+
+                Tables\Columns\TextColumn::make('total_attendances')
+                ->label('Kehadiran')
+                ->getStateUsing(function ($record) {
+                    $month = request('month', now()->format('m'));
+                    $year = request('year', now()->format('Y'));
+
+                    return $record->employee->attendances()
+                        ->whereMonth('date', $month)
+                        ->whereYear('date', $year)
+                        ->where('status', 'hadir')
+                        ->count();
+                }),
+
+                Tables\Columns\TextColumn::make('izin_attendances')
+                ->label('Izin')
+                ->getStateUsing(function ($record) {
+                    $month = request('month', now()->format('m'));
+                    $year = request('year', now()->format('Y'));
+
+                    return $record->employee->attendances()
+                        ->whereMonth('date', $month)
+                        ->whereYear('date', $year)
+                        ->where('status', 'izin')
+                        ->count();
+                }),
+
+                Tables\Columns\TextColumn::make('alpha_attendances')
+                ->label('Alpha')
+                ->getStateUsing(function ($record) {
+                    $month = request('month', now()->format('m'));
+                    $year = request('year', now()->format('Y'));
+
+                    return $record->employee->attendances()
+                        ->whereMonth('date', $month)
+                        ->whereYear('date', $year)
+                        ->where('status', 'alpha')
+                        ->count();
+                }),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('month')
+                    ->label('Bulan')
+                    ->options(array_combine(range(1, 12), array_map(fn ($m) => Carbon::createFromFormat('m', $m)->translatedFormat('F'), range(1, 12))))
+                    ->default(now()->format('m'))
+                    ->query(function (Builder $query, Tables\Filters\SelectFilter $filter) {
+                        $month = $filter->getState();
+                        if ($month) {
+                            $query->whereMonth('date', $month);
+                        }
+                        return $query;
+                    }),
+            
+                Tables\Filters\SelectFilter::make('year')
+                    ->label('Tahun')
+                    ->options(array_combine(range(now()->year - 5, now()->year), range(now()->year - 5, now()->year)))
+                    ->default(now()->format('Y'))
+                    ->query(function (Builder $query, Tables\Filters\SelectFilter $filter) {
+                        $year = $filter->getState();
+                        if ($year) {
+                            $query->whereYear('date', $year);
+                        }
+                        return $query;
+                    }),
             ])
+            
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
