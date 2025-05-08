@@ -54,7 +54,7 @@ class EmployeeResource extends Resource
                     'Menikah' => 'Menikah',
                     'Belum Menikah' => 'Belum Menikah',
                 ]),
-                Forms\Components\TextArea::make('address')->required()->label('Alamat'),
+                Forms\Components\Textarea::make('address')->required()->label('Alamat'),
                 Forms\Components\Select::make('status')->required()->label('Status Pegawai')->options([
                     'Aktif' => 'Aktif',
                     'Tidak Aktif' => 'Tidak Aktif',
