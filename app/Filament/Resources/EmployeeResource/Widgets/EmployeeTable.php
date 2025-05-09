@@ -94,33 +94,36 @@ class EmployeeTable extends BaseWidget
                     ->label('Bulan')
                     ->options(array_combine(range(1, 12), array_map(fn($m) => Carbon::createFromFormat('m', $m)->translatedFormat('F'), range(1, 12))))
                     ->default(now()->format('m'))
-                    ->query(function (Builder $query, $data) {
-                        $query->whereHas('attendances', function (Builder $query) use ($data) {
-                            $query->whereMonth('date', $data);
-                        });
-                    })
-                ,
+                    ->query(function (Builder $query, $value) {
+                        if ($value) {
+                            $query->whereHas('attendances', function (Builder $query) use ($value) {
+                                $query->whereRaw('EXTRACT(MONTH FROM date) = ?', [$value]);
+                            });
+                        }
+                    }),
+            
                 Tables\Filters\SelectFilter::make('year')
                     ->label('Tahun')
                     ->options(function () {
-                        $firstYear = Attendance::selectRaw('YEAR(MIN(date)) as year')->value('year');
-                        $currentYear = date('Y');
-
-                        // Jika tidak ada data di attendance, mulai dari tahun saat ini
+                        $firstYear = Attendance::selectRaw('MIN(EXTRACT(YEAR FROM date)) as year')->value('year');
+                        $currentYear = now()->year;
+            
+                        // Jika tidak ada data, mulai dari tahun saat ini
                         $startYear = $firstYear ?? $currentYear;
-
+            
                         // Buat rentang tahun dari tahun pertama hingga 5 tahun ke depan
                         $years = range($startYear, $currentYear + 5);
-
+            
                         return array_combine($years, $years);
                     })
                     ->default(now()->format('Y'))
-                    ->query(function (Builder $query, $data) {
-                        $query->whereHas('attendances', function (Builder $query) use ($data) {
-                            $query->whereYear('date', $data);
-                        });
-                    })
-                ,
+                    ->query(function (Builder $query, $value) {
+                        if ($value) {
+                            $query->whereHas('attendances', function (Builder $query) use ($value) {
+                                $query->whereRaw('EXTRACT(YEAR FROM date) = ?', [$value]);
+                            });
+                        }
+                    }),
             ])
             ->actions([
                 Action::make('recordAttendance')
