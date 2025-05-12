@@ -96,7 +96,7 @@ class AttendanceResource extends Resource
                     return $record->employee->attendances()
                         ->whereMonth('date', $month)
                         ->whereYear('date', $year)
-                        ->where('status', 'hadir')
+                        ->where('status', 'Hadir')
                         ->count();
                 }),
 
@@ -109,7 +109,7 @@ class AttendanceResource extends Resource
                     return $record->employee->attendances()
                         ->whereMonth('date', $month)
                         ->whereYear('date', $year)
-                        ->where('status', 'izin')
+                        ->where('status', 'Izin')
                         ->count();
                 }),
 
@@ -122,7 +122,7 @@ class AttendanceResource extends Resource
                     return $record->employee->attendances()
                         ->whereMonth('date', $month)
                         ->whereYear('date', $year)
-                        ->where('status', 'alpha')
+                        ->where('status', 'Alpha')
                         ->count();
                 }),
             ])
