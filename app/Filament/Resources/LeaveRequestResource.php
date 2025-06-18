@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -21,6 +22,11 @@ class LeaveRequestResource extends Resource
     protected static ?string $pluralLabel = 'Cuti';
 
     protected static ?string $navigationIcon = 'heroicon-s-calendar-days';
+
+    public static function canAccess(): bool
+    {
+        return Auth::check() && Auth::user()->role === 'supervisor' || Auth::user()->role === 'dev' || Auth::user()->role === 'hrd';
+    }
 
     public static function form(Form $form): Form
     {
@@ -85,13 +91,13 @@ class LeaveRequestResource extends Resource
                     ->date()
                     ->label('Mulai')
                     ->searchable()
-                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->translatedFormat('d F Y')),
+                    ->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
 
                 Tables\Columns\TextColumn::make('end_date')
                     ->date()
                     ->label('Selesai')
                     ->searchable()
-                    ->formatStateUsing(fn ($state) => Carbon::parse($state)->translatedFormat('d F Y')),
+                    ->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
 
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors([

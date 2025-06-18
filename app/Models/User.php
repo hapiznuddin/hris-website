@@ -55,6 +55,16 @@ class User extends Authenticatable implements FilamentUser
         return str_ends_with($this->email, '@hris.com') || str_ends_with($this->email, '@admin.com') || str_ends_with($this->email, '@email.com') || str_ends_with($this->email, '@gmail.com');
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->role === 'dev' || $this->role === 'hrd' || $this->role === 'supervisor';
+    }
+
+    public function isKaryawan(): bool
+    {
+        return $this->role === 'karyawan';
+    }
+
     public function employee()
     {
         return $this->hasOne(Employee::class, 'user_id');

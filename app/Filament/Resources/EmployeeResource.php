@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeResource extends Resource
 {
@@ -22,14 +23,23 @@ class EmployeeResource extends Resource
     protected static ?string $pluralLabel = 'Data Pegawai';
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    public static function canAccess(): bool
+    {
+        return Auth::check() && Auth::user()->role === 'supervisor' || Auth::user()->role === 'dev' || Auth::user()->role === 'hrd';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('user_id')
+                    ->relationship('user', 'name')
+                    ->required()
+                    ->searchable()
+                    ->label('Akun Pegawai'),
                 Forms\Components\TextInput::make('nip')
                     ->label('NIP')
-                    ->default(fn() => 'Akan diisi otomatis')
-                    ->disabled()
+                    ->placeholder('Kosongkan jika tidak ingin diisi otomatis')
                     ->dehydrated(false), // Nilainya tetap dikirim ke server
                 Forms\Components\TextInput::make('name')->required()->label('Nama Pegawai'),
                 Forms\Components\TextInput::make('nik')->required()->label('Nomor Induk Kependudukan'),
@@ -78,7 +88,7 @@ class EmployeeResource extends Resource
                 Tables\Columns\TextColumn::make('name')->label('Nama Pegawai')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('position')->label('Jabatan')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('department')->label('Departemen')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('join_date')->label('Tanggal Bergabung')->sortable()->searchable()->formatStateUsing(fn ($state) => Carbon::parse($state)->translatedFormat('d F Y')),
+                Tables\Columns\TextColumn::make('join_date')->label('Tanggal Bergabung')->sortable()->searchable()->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
             ])
             ->filters([
                 //
