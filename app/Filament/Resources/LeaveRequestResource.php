@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\LeaveRequestResource\Pages;
 use App\Filament\Resources\LeaveRequestResource\RelationManagers;
+use App\Models\Employee;
 use App\Models\LeaveRequest;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -23,19 +24,50 @@ class LeaveRequestResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-calendar-days';
 
-    public static function canAccess(): bool
+    public static function getEloquentQuery(): Builder
     {
-        return Auth::check() && Auth::user()->role === 'supervisor' || Auth::user()->role === 'dev' || Auth::user()->role === 'hrd';
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()->isKaryawan()) {
+            $employeeId = auth()->user()->employee?->id;
+
+            if ($employeeId) {
+                $query->where('employee_id', $employeeId);
+            } else {
+                // Jika tidak ada relasi employee, kosongkan query agar tidak error
+                $query->whereNull('employee_id');
+            }
+        }
+
+        return $query;
     }
+
+    // public static function canAccess(): bool
+    // {
+    //     return Auth::check() && Auth::user()->role === 'supervisor' || Auth::user()->role === 'dev' || Auth::user()->role === 'hrd';
+    // }
 
     public static function form(Form $form): Form
     {
+        // $employee = Employee::where('user_id', $user->id)->first();
         return $form
             ->schema([
                 Forms\Components\Select::make('employee_id')
                     ->relationship('employee', 'name')
+                    ->label('Nama Pegawai')
                     ->required()
-                    ->label('Nama Pegawai'),
+                    ->options(function () {
+                        $user = auth()->user();
+                        if ($user->isKaryawan()) {
+                            return [
+                                $user->employee->id => $user->employee->name
+                            ];
+                        }
+                        return Employee::pluck('name', 'id');
+                    })
+                    ->default(fn() => auth()->user()->employee->id ?? null)
+                    ->disabled(auth()->user()->isKaryawan())
+                    ->dehydrated(),
 
                 Forms\Components\DatePicker::make('start_date')
                     ->required()
@@ -69,10 +101,9 @@ class LeaveRequestResource extends Resource
                         'Ditolak' => 'Ditolak',
                     ])
                     ->default('pending')
-                    ->required(),
+                    ->required()
+                    ->hidden(auth()->user()->isKaryawan()),
             ]);
-
-
     }
 
     public static function table(Table $table): Table

@@ -8,9 +8,11 @@ use App\Models\Attendance;
 use Auth;
 use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\FilterState;
@@ -66,6 +68,33 @@ class AttendanceResource extends Resource
             ]);
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        $filters = request('tableFilters', []);
+        $month = $filters['bulan'] ?? now()->format('m');
+        $year = $filters['tahun'] ?? now()->format('Y');
+
+        return parent::getEloquentQuery()
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->with([
+                'employee' => function ($query) use ($month, $year) {
+                    $query->withCount([
+                        'attendances as total_hadir' => fn($q) => $q->where('status', 'Hadir')
+                            ->whereMonth('date', $month)
+                            ->whereYear('date', $year),
+                        'attendances as total_izin' => fn($q) => $q->where('status', 'Izin')
+                            ->whereMonth('date', $month)
+                            ->whereYear('date', $year),
+                        'attendances as total_alpha' => fn($q) => $q->where('status', 'Alpha')
+                            ->whereMonth('date', $month)
+                            ->whereYear('date', $year),
+                    ]);
+                }
+            ]);
+    }
+
+
     public static function table(Table $table): Table
     {
         return $table
@@ -95,74 +124,37 @@ class AttendanceResource extends Resource
                         'primary' => 'Pulang Cepat',
                     ]),
 
-                Tables\Columns\TextColumn::make('total_attendances')
-                    ->label('Kehadiran')
-                    ->getStateUsing(function ($record) {
-                        $filters = request('tableFilters', []);
-                        $month = $filters['month'] ?? now()->format('m');
-                        $year = $filters['year'] ?? now()->format('Y');
-
-                        return $record->employee->attendances()
-                            ->whereMonth('date', $month)
-                            ->whereYear('date', $year)
-                            ->where('status', 'Hadir')
-                            ->count();
-                    }),
-
-                Tables\Columns\TextColumn::make('izin_attendances')
-                    ->label('Izin')
-                    ->getStateUsing(function ($record) {
-                        $filters = request('tableFilters', []);
-                        $month = $filters['month'] ?? now()->format('m');
-                        $year = $filters['year'] ?? now()->format('Y');
-
-                        return $record->employee->attendances()
-                            ->whereMonth('date', $month)
-                            ->whereYear('date', $year)
-                            ->where('status', 'Izin')
-                            ->count();
-                    }),
-
-                Tables\Columns\TextColumn::make('alpha_attendances')
-                    ->label('Alpha')
-                    ->getStateUsing(function ($record) {
-                        $filters = request('tableFilters', []);
-                        $month = $filters['month'] ?? now()->format('m');
-                        $year = $filters['year'] ?? now()->format('Y');
-
-                        return $record->employee->attendances()
-                            ->whereMonth('date', $month)
-                            ->whereYear('date', $year)
-                            ->where('status', 'Alpha')
-                            ->count();
-                    }),
+                Tables\Columns\TextColumn::make('employee.total_hadir')
+                    ->label('Kehadiran'),
+                Tables\Columns\TextColumn::make('employee.total_izin')
+                    ->label('Izin'),
+                Tables\Columns\TextColumn::make('employee.total_alpha')
+                    ->label('Alpha'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('month')
+                SelectFilter::make('bulan')
                     ->label('Bulan')
-                    ->options(array_combine(range(1, 12), array_map(fn($m) => Carbon::createFromFormat('m', $m)->translatedFormat('F'), range(1, 12))))
-                    ->default(now()->format('m'))
-                    ->query(function (Builder $query, Tables\Filters\SelectFilter $filter) {
-                        $month = $filter->getState();
-                        if ($month) {
-                            $query->whereMonth('date', $month);
-                        }
-                        return $query;
-                    }),
+                    ->form([
+                        Select::make('value')
+                            ->options(array_combine(
+                                range(1, 12),
+                                array_map(fn($m) => Carbon::createFromFormat('m', $m)->translatedFormat('F'), range(1, 12))
+                            )),
+                    ])
+                    ->query(fn($query) => $query),
 
-                Tables\Filters\SelectFilter::make('year')
+                SelectFilter::make('tahun')
                     ->label('Tahun')
-                    ->options(array_combine(range(now()->year - 5, now()->year), range(now()->year - 5, now()->year)))
-                    ->default(now()->format('Y'))
-                    ->query(function (Builder $query, Tables\Filters\SelectFilter $filter) {
-                        $year = $filter->getState();
-                        if ($year) {
-                            $query->whereYear('date', $year);
-                        }
-                        return $query;
-                    }),
+                    ->form([
+                        Select::make('value')
+                            ->options(
+                                collect(range(2022, now()->year))
+                                    ->mapWithKeys(fn($y) => [$y => $y])
+                                    ->toArray()
+                            )
+                    ])
+                    ->query(fn($query) => $query),
             ])
-
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
