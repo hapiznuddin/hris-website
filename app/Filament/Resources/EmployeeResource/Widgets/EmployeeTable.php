@@ -30,10 +30,10 @@ class EmployeeTable extends BaseWidget
 
     protected static ?string $heading = 'Data Pegawai';
 
-    //     public static function canView(): bool
-//     {
-//         return auth()->user()?->isAdmin();
-//     }
+    public static function canView(): bool
+    {
+        return auth()->user()?->isAdmin();
+    }
 
 
 

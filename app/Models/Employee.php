@@ -24,7 +24,13 @@ class Employee extends Model
             }
         });
     }
-    
+
+    public function getRemainingLeavesAttribute()
+    {
+        $balance = $this->leaveBalance()->first();
+        return $balance ? $balance->total_leaves - $balance->used_leaves : 0;
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -38,5 +44,10 @@ class Employee extends Model
     public function attendances()
     {
         return $this->hasMany(Attendance::class, 'employee_id');
+    }
+
+    public function leaveBalance()
+    {
+        return $this->hasOne(LeaveBalance::class)->where('year', now()->year);
     }
 }

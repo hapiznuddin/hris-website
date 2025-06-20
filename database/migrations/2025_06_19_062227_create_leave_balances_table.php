@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('leave_balances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
-            $table->integer('total_leaves')->default(0);
+            $table->integer('total_leaves')->default(12);
             $table->integer('used_leaves')->default(0);
             $table->year('year');
             $table->timestamps();

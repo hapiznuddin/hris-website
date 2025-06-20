@@ -2,9 +2,12 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\AttendanceResource\Widgets\AttendanceTable;
 use App\Filament\Resources\EmployeeResource;
 use App\Filament\Resources\EmployeeResource\Widgets\EmployeeStats;
 use App\Filament\Resources\EmployeeResource\Widgets\EmployeeTable;
+use App\Filament\Resources\EmployeeResource\Widgets\EmployeeViewTable;
+use App\Filament\Resources\EmployeeResource\Widgets\StatsOverviewEmployee;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -47,7 +50,10 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 EmployeeStats::class,
-                EmployeeTable::class
+                EmployeeTable::class,
+                StatsOverviewEmployee::class,
+                EmployeeViewTable::class,
+                AttendanceTable::class
             ])
             ->middleware([
                 EncryptCookies::class,

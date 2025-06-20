@@ -70,12 +70,32 @@ class LeaveRequestResource extends Resource
                     ->dehydrated(),
 
                 Forms\Components\DatePicker::make('start_date')
+                    ->afterOrEqual(today())
                     ->required()
                     ->label('Tanggal Mulai'),
 
                 Forms\Components\DatePicker::make('end_date')
+                    ->afterOrEqual('start_date')
+                    ->afterOrEqual(today())
                     ->required()
-                    ->label('Tanggal Selesai'),
+                    ->rules([
+                        function () {
+                            return function ($attribute, $value, $fail) {
+                                $start = request()->input('data.start_date');
+                                $end = $value;
+
+                                if ($start && $end) {
+                                    $days = Carbon::parse($start)->diffInDays(Carbon::parse($end)) + 1;
+                                    $balance = auth()->user()->employee->leaveBalance()->where('year', now()->year)->first();
+
+                                    if ($balance && $balance->total_leaves - $balance->used_leaves < $days) {
+                                        $fail("Sisa cuti tidak mencukupi untuk $days hari.");
+                                    }
+                                }
+                            };
+                        }
+                    ])
+                    ->label('Tanggal Cuti'),
 
                 Forms\Components\Select::make('type')
                     ->required()
