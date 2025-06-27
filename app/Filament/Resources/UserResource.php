@@ -33,7 +33,7 @@ class UserResource extends Resource
 
     public static function canAccess(): bool
     {
-        return Auth::check() && Auth::user()->role === 'supervisor' || Auth::user()->role === 'dev' || Auth::user()->role === 'karyawan';
+        return Auth::check() && Auth::user()->role === 'supervisor' || Auth::user()->role === 'dev';
     }
 
     public static function form(Form $form): Form
